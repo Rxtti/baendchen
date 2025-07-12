@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bändchen bestellen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    label, input, textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      background: #008CBA;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kostenloses Event-Bändchen bestellen</h1>
+  <form id="orderForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required />
+
+    <label for="address">Adresse:</label>
+    <textarea id="address" required></textarea>
+
+    <button type="submit">Bestellen</button>
+  </form>
+
+  <p id="responseMessage" class="success"></p>
+
+  <script>
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const address = document.getElementById('address').value.trim();
+
+      const res = await fetch('/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, address })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('responseMessage').innerText = 'Vielen Dank! Dein Bändchen wird dir zugesendet.';
+        document.getElementById('orderForm').reset();
+      } else {
+        document.getElementById('responseMessage').innerText = 'Ein Fehler ist aufgetreten.';
+      }
+    });
+  </script>
+</body>
+</html>
