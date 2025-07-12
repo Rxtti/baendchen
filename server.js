@@ -12,11 +12,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/order', (req, res) => {
   const { name, address } = req.body;
+  const orderText = `Name: ${name}, Adresse: ${address}\n`;
 
-  if (!name || !address) {
-    return res.status(400).json({ success: false, message: 'Name und Adresse erforderlich.' });
-  }
-
+  // Schreibe die Bestellung in die Datei 'orders.txt' im gleichen Ordner wie server.js
+  const filePath = path.join(__dirname, 'orders.txt');
+  fs.appendFile(filePath, orderText, (err) => {
+    if (err) {
+      console.error('Fehler beim Speichern der Bestellung:', err);
+      return res.status(500).send('Fehler beim Speichern der Bestellung');
+    }
+    console.log('Neue Bestellung gespeichert:', orderText.trim());
+    res.send('Danke für deine Bestellung! Dein Bändchen ist reserviert.');
+  });
+});
   orders.push({ name, address, date: new Date() });
   console.log('Neue Bestellung:', name, address);
 
